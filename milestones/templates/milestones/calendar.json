@@ -1,0 +1,13 @@
+[
+    {% for milestone in milestones %}
+    {
+        "id": "{{ milestone.pk }}",
+        "title": "{{ milestone.title|escapejs }} - {{ milestone.owner.first_name|slice:":1" }}{{ milestone.owner.last_name|slice:":1" }}",
+        "start": "{{ milestone.date.isoformat }}",
+        "url": "{{ milestone.article.urlpath_set.get.get_absolute_url }}",
+        "color": "{{ milestone.color }}",
+        "className": "{{ milestone.owner.username }}"
+    }
+    {% if not forloop.last %},{% endif %}
+    {% endfor %}
+]

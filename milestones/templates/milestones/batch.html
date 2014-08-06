@@ -1,0 +1,41 @@
+{% extends "wiki/base.html" %}
+
+{% block pagetitle %}Milestones{% endblock %}
+{% block wiki_contents %}
+<div class="container">
+    <form id="milestones-batch" class="form" action="." method="post">{% csrf_token %}
+	{{ form.non_field_errors }}
+	<div id="milestones-batch-action">
+	    <div class="controls">
+		{{ form.action.errors }}
+		{{ form.action }}
+	    </div>
+	    <div class="controls">
+		<button class="btn" type="submit">Submit</button>
+	    </div>
+	</div>
+        <table class="table table-bordered">
+	    <tr>
+		<th class="no-sort"><input id="id_select_all" type="checkbox" name="select_all" />
+		<th class="no-sort"></th>
+		<th>Date</th>
+		<th>Page</th>
+		<th>Milestone</th>
+		<th>Owner</th>
+		<th>Status</th>
+	    </tr>
+	    {% for milestone in milestones %}
+		<tr class="{{ milestone.get_overdue_class }}">
+		    <td><input class="action-select" type="checkbox" value="{{ milestone.pk }}" name="_selected_action" /></td>
+		    <td><a title="Edit" href="/{{ milestone.article.id }}/plugin/milestones/edit/{{ milestone.pk }}"><span class="icon-edit"></span></a></td>
+		    <td data-sort="{{ milestone.date|date:'U' }}">{{ milestone.date|date:"Y-m-d" }} <span class="muted">{{ milestone.date|date:"D" }}</span> {% if milestone.time != None %}<span class="muted">{{ milestone.time|date:"g:i a" }}</span>{% endif %}</td>
+		    <td><a href="{% url 'wiki:get' article_id=milestone.article.id %}">{{ milestone.article_revision.title }}</a></td>
+		    <td>{{ milestone.title }}</td>
+		    <td><a href="/Staff/{{ milestone.owner.username }}">{{ milestone.owner.last_name }}</a></td>
+		    <td>{{ milestone.get_status }}</td>
+		</tr>
+	    {% endfor %}
+	</table>
+    </form>
+</div>
+{% endblock %}

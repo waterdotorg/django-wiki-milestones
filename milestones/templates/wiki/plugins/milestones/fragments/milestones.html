@@ -1,0 +1,30 @@
+  <div class="milestones clearfix">
+    {% if milestones.count %}
+      <h2>Milestones</h2>
+      <table class="table table-striped milestone">
+        <thead>
+          <tr>
+            <th class="hidden-print"></th>
+            <th>Date</th>
+            {% if display_milestone_page_title %}<th>Page</th>{% endif %}
+            <th>Milestone</th>
+            <th>Owner</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        {% for milestone in milestones %}
+        <tr class="{{ milestone.get_overdue_class }} {{ milestone.get_status_class }}">
+          <td class="hidden-print"><a title="Edit" href="/{{ milestone.article.id }}/plugin/milestones/edit/{{ milestone.pk }}"><span class="icon-edit"></span></a></td>
+          <td data-sort="{{ milestone.date|date:'U' }}">{{ milestone.date|date:"Y-m-d" }} <span class="muted">{{ milestone.date|date:"D" }}</span> {% if milestone.time != None %}<span class="muted">{{ milestone.time|date:"g:i a" }}</span>{% endif %}</td>
+          {% if display_milestone_page_title %}
+          <td><a href="{% url 'wiki:get' article_id=milestone.article.id %}">{{ milestone.article_revision.title }}</a></td>
+          {% endif %}
+          <td>{{ milestone.title }}</td>
+          <td><a href="/Staff/{{ milestone.owner.username }}">{{ milestone.owner.first_name }} {{ milestone.owner.last_name|slice:":1" }}.</a></td>
+          <td>{{ milestone.get_status }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      <p class="hidden-print"><a class="toggle-hidden-items pull-right text-muted btn btn-primary btn-small" href="#">Toggle Hidden</a></p>
+    {% endif %}
+  </div>

@@ -1,0 +1,25 @@
+{% load i18n sekizai_tags %}
+{% load url from future %}
+<h4>{% trans "Insert milestones matching **optional kwargs" %}</h4>
+<pre>[milestones days:7]</pre>
+<pre>[milestones owner:username days:30 start_date:YYYY-MM-DD end_date:YYYY-MM-dd]</pre>
+<table class="table table-compact">
+  <tbody>
+    <tr>
+      <th>owner</th>
+      <td>Username of milestone owner</td>
+    </tr>
+    <tr>
+      <th>days</th>
+      <td>Number of days forward<td>
+    </tr>
+    <tr>
+      <th>start_date</th>
+      <td>Filter by date greater than or equal<td>
+    </tr>
+    <tr>
+      <th>end_date</th>
+      <td>Filter by date less than or equal<td>
+    </tr>
+  </tbody>
+</table>

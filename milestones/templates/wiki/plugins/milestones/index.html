@@ -1,0 +1,42 @@
+{% extends "wiki/article.html" %}
+{% load wiki_tags i18n humanize %}
+{% load url from future %}
+{% load crispy_forms_tags %}
+
+{% block pagetitle %}{% trans "Milestones" %}: {{ article.current_revision.title }}{% endblock %}
+
+{% block wiki_contents_tab %}
+<div class="row">
+  <div class="col-lg-4">
+    {% if article|is_locked %}
+      <p class="muted">
+        <i class="icon-lock"></i>
+        {% trans "The article is currently locked for editing, and therefore no new milestones can be added." %}
+      </p>
+    {% else %}
+      <form class="form" method="post" action=".">{% csrf_token %}
+        {{ form|crispy }}
+        <div class="control-group">
+          <div class="controls">
+            <button type="submit" class="btn">Submit</button>
+          </div>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+  <div class="col-lg-8">
+    {% include "wiki/plugins/milestones/fragments/milestones.html" %}
+  </div>
+</div>
+{% endblock %}
+
+{% block footer_js  %}
+{{ block.super }}
+<script>
+  $(document).ready(function() {
+    $("#id_title").focus();
+    $("#id_date").datepicker({'format': 'yyyy-mm-dd'});
+    $("#id_end_date").datepicker({'format': 'yyyy-mm-dd'});
+  });
+</script>
+{% endblock %}

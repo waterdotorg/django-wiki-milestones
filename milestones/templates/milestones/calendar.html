@@ -1,0 +1,86 @@
+{% extends "wiki/base.html" %}
+{% load sekizai_tags wiki_tags %}
+{% load url from future %}
+
+{% block pagetitle %}Milestone Calendar{% endblock %}
+
+{% block head_css_lower  %}        
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/fullcalendar.css" rel="stylesheet">
+{% endblock %}
+
+{% block wiki_contents %}
+<div class="container">
+    <a id="calendar-toggle" class="fc-button fc-state-default" href="#"><i class="icon-filter"></i> Filters</a>
+    <div id="calendar-filter">
+        <ul>
+            <li>
+                <a id="calendar-filter-hide" href="#">&laquo; Hide</a>
+            </li>
+            <li class="clearfix">
+                <label><input id="calendar-filter-select-all" type="checkbox" checked="checkded"> Select All</label>
+            </li>
+            {% for user in users %}
+            <li class="user-filter">
+                <div style="background-color:{{ user.color }}; display: inline-block; height: 14px; width: 20px;"></div>
+                <label><input class="user-filter-item" type="checkbox" name="{{ user.username }}" checked="checked"> {{ user.first_name }} {{ user.last_name|slice:":1" }}</label>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div id="calendar"></div>
+</div>
+{% endblock %}
+
+{% block footer_js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/fullcalendar.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#calendar').fullCalendar({
+                firstDay: 1,
+                header: {
+                    left:   'today prev,next',
+                    center: 'title',
+                    right:  'month,basicWeek,basicDay'
+                },
+                events: {
+                    url: '/milestones/calendar/json/?apk={{ article_pk }}',
+                    error: function() {
+                        alert('Error fetching milestones!');
+                    }
+                },
+                dayClick: function(date, allDay, jsEvent, view) {
+                    $('#calendar').fullCalendar('changeView', 'basicDay');
+                    $('#calendar').fullCalendar('gotoDate', date.getFullYear(), date.getMonth(), date.getDate());
+                }
+            });
+
+            $(".fc-header-left").append($("#calendar-toggle"));
+
+            $("#calendar-toggle").click(function(e) {
+                e.preventDefault();
+                $("#calendar-filter").toggle();
+            });
+
+            $("#calendar-filter-hide").click(function(e) {
+                e.preventDefault();
+                $("#calendar-filter").hide();
+            });
+
+            $('.user-filter-item').click(function(e) {
+                $("." + $(this).attr("name")).toggle();
+            });
+
+            $("#calendar-filter-select-all").click(function(e) {
+                if ($(this).attr("checked")) {
+                    $(".user-filter-item").prop("checked", true);
+                    $("a.fc-event").show();
+                } else {
+                    $(".user-filter-item").prop("checked", false);
+                    $("a.fc-event").hide();
+                }
+            });
+        });
+    </script>
+{% endblock %}
